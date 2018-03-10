@@ -1,0 +1,30 @@
+idstring "LZ4 "
+comtype lz4
+get SIZE long
+get CHUNK_SIZE long
+get NAME filename
+xmath TMP "SIZE % CHUNK_SIZE"
+if TMP != 0
+   math TMP = 1
+else
+   math TMP = 0
+endif
+xmath CHUNKS "(SIZE / CHUNK_SIZE) + TMP"
+append
+for i = 1 <= CHUNKS
+   get OFFSET long
+   savepos POS
+   if i == CHUNKS
+      get ZSIZE asize
+   else
+      get ZSIZE long
+   endif
+   math ZSIZE -= OFFSET
+   goto POS
+   if ZSIZE < CHUNK_SIZE
+      clog NAME OFFSET ZSIZE CHUNK_SIZE
+   else
+      log NAME OFFSET ZSIZE
+   endif
+next i
+append
